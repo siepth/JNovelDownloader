@@ -22,7 +22,7 @@ public class main {
 		//Frame frame =new Frame(downloader,readHtml,option);
 		Frame frame =new Frame(option);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setSize(700,400);
+		frame.setSize(700,450);
 		frame.setVisible(true);
 		//frame.popVersionAlert(option);
 		if(!option.checkPath()){
