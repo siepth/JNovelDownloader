@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.text.DecimalFormat;
 
 import javax.swing.JTextArea;
 
@@ -14,24 +15,40 @@ public class ReadHtml {
 	public String bookName;
 	public String author;
 	private int havethread;
+	private int threadnum;
 //	private BufferedReader reader;
 	// private String path;
 	private OutputStreamWriter writer;
 	private String domain;
 	private JTextArea resultTextArea;
+	private int bytesin;
+	private int bytesout;
 	
 	public ReadHtml() {
 		// TODO Auto-generated constructor stub
+		bytesin = bytesout = 0;
 
 	}
 
 	public ReadHtml(int page) {
 		fileName = new String[page][];
 		havethread = 0;
+		bytesin = bytesout = 0;
 		bookName = null;
 		// path = "";
 	}
 
+	public void setUp(int threadNumber, UrlData book, JTextArea resultTextArea) {
+		threadnum = threadNumber;
+		fileName = new String[threadnum][];
+		this.bookName = book.bookname;
+		this.author = book.author;
+		havethread = 0;
+		bytesin = bytesout = 0;
+		this.domain=book.domain;
+		this.resultTextArea= resultTextArea;
+	}
+	/*
 	public void setUp(int threadNumber, String bookName, String author,UrlData urlData,JTextArea resultTextArea) {
 		fileName = new String[threadNumber][];
 		this.bookName = bookName;
@@ -40,10 +57,11 @@ public class ReadHtml {
 		this.domain=urlData.domain;
 		this.resultTextArea=resultTextArea;
 	}
-
+*/
 	public void setPage(int page) {
 		fileName = new String[page][];
 		havethread = 0;
+		
 	}
 
 //	public void openFile(String name) throws UnsupportedEncodingException {// 輸入完整檔案路徑
@@ -128,7 +146,7 @@ public class ReadHtml {
 		writer = new OutputStreamWriter(new FileOutputStream(option.novelPath
 				+ bookName + ".txt"), option.outputEncode);
 		writer.write(bookName + "\r\n" + author + "\r\n");
-		resultTextArea.append("\r\n開始分析網頁\r\n");
+		resultTextArea.append("\r\nStart analyzing html...\r\n");
 		resultTextArea.setCaretPosition(resultTextArea.getText()
 				.length());
 		int type;
@@ -147,17 +165,32 @@ public class ReadHtml {
 			}
         } catch (InterruptedException e) {}
         for (int n=0;n<option.threadNumber;n++){
-        	System.out.println("小說製作完成");
+        	bytesin += makeBookThreads[n].getInputSize();
+        	bytesout += makeBookThreads[n].getOutputSize();
+        	System.out.println("thread[" +n + "] processed (" +makeBookThreads[n].getInputSize() + ") -->(" +makeBookThreads[n].getOutputSize() + ")");
 			writer.write(makeBookThreads[n].getResult());
 		}
         writer.flush();
         writer.close();
-        System.out.println("小說製作完成");
+        System.out.println("Completed");
+        
+        DecimalFormat formatter = new DecimalFormat ("#,###");
+        
+        resultTextArea.append("\r\nTotal words processed (" + formatter.format(bytesin) + ")->(" + formatter.format(bytesout) + ")\r\n");
+		resultTextArea.setCaretPosition(resultTextArea.getText().length());
+		
 		return true;
 	}
 
 	public void addFileName(String []temp) {// 輸入完整檔案路徑 改成一次一個array
-		fileName[havethread++] = temp;
+		System.out.println("file [" + havethread + "/" + threadnum + "]:" + temp.length);
+		if (havethread < threadnum){
+			fileName[havethread++] = temp;
+		} 
+		else {
+			System.out.println("out of string array buffer");
+		}
+			
 	}
 
 	public void setBookName(String data) {
@@ -165,7 +198,7 @@ public class ReadHtml {
 	}
 
 	public void delTempFile() {
-		System.out.println("刪除暫存檔中..");
+		System.out.println("Deleting temp files..");
 		File temp;
 		for (int n = 0; n < havethread; n++) {
 			for (int m = 0; m < fileName[n].length; m++) {
@@ -176,7 +209,14 @@ public class ReadHtml {
 
 		}
 
-		System.out.println("刪除完畢");
+		System.out.println("Done");
+	}
+	
+	public int getBytesIn() {
+		return bytesin;
+	}
+	public int getBytesOut() {
+		return bytesout;
 	}
 
 }

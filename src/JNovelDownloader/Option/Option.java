@@ -123,12 +123,12 @@ public class Option {
 	
 	public void printOption(JTextArea resultTextArea){
 		String lineSeparator=System.getProperty("line.separator");
-		resultTextArea.append("暫存檔位置：" + tempPath + lineSeparator);
-		resultTextArea.append("小說存放位置：" + novelPath + lineSeparator);
-		if(encoding) resultTextArea.append("正體中文"+lineSeparator);
-		else resultTextArea.append("簡體中文"+lineSeparator);
-		resultTextArea.append("多執行序數目："+threadNumber+lineSeparator);
-		resultTextArea.append("輸出編碼："+outputEncode+lineSeparator);
+		resultTextArea.append("Temp path:" + tempPath + lineSeparator);
+		resultTextArea.append("Text path:" + novelPath + lineSeparator);
+		if(encoding) resultTextArea.append("Traditional Chinese"+lineSeparator);
+		else resultTextArea.append("Simplified Chinese"+lineSeparator);
+		resultTextArea.append("Thread number:"+threadNumber+lineSeparator);
+		resultTextArea.append("Ouput encoding:"+outputEncode+lineSeparator);
 		resultTextArea.setCaretPosition(resultTextArea.getDocument().getLength());
 		
 	}

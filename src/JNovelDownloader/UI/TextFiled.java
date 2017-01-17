@@ -42,9 +42,9 @@ public class TextFiled extends JTextField implements MouseListener {
     private void init() {  
         this.addMouseListener(this);  
         pop = new JPopupMenu();  
-        pop.add(copy = new JMenuItem("複製"));  
-        pop.add(paste = new JMenuItem("貼上"));  
-        pop.add(cut = new JMenuItem("剪下"));  
+        pop.add(copy = new JMenuItem("Copy"));  
+        pop.add(paste = new JMenuItem("Paste"));  
+        pop.add(cut = new JMenuItem("Cut"));  
         copy.setAccelerator(KeyStroke.getKeyStroke('C', InputEvent.CTRL_MASK));  
         paste.setAccelerator(KeyStroke.getKeyStroke('V', InputEvent.CTRL_MASK));  
         cut.setAccelerator(KeyStroke.getKeyStroke('X', InputEvent.CTRL_MASK));  

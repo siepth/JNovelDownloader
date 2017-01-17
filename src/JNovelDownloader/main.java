@@ -1,12 +1,12 @@
 package JNovelDownloader;
 
-
 import javax.swing.JFrame;
 
 import JNovelDownloader.Kernel.Downloader;
 import JNovelDownloader.Kernel.ReadHtml;
 import JNovelDownloader.Option.Option;
 import JNovelDownloader.UI.Frame;
+import sun.awt.Mutex;
 
 public class main {
 	/**
@@ -16,13 +16,15 @@ public class main {
 	public static void main(String[] args) throws Exception {
 		// TODO Auto-generated method stub
 		Option option=new Option();
-		Downloader downloader=new Downloader();
-		ReadHtml readHtml =new ReadHtml();
-		Frame frame =new Frame(downloader,readHtml,option);
+		//Downloader downloader=new Downloader();
+		//ReadHtml readHtml =new ReadHtml();
+		Mutex mutex = new Mutex();
+		//Frame frame =new Frame(downloader,readHtml,option);
+		Frame frame =new Frame(option);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setSize(800,350);
+		frame.setSize(700,400);
 		frame.setVisible(true);
-		frame.popVersionAlert(option);
+		//frame.popVersionAlert(option);
 		if(!option.checkPath()){
 			frame.popPathAlert();
 		}

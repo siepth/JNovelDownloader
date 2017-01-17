@@ -18,7 +18,7 @@ public class Analysis {
 		}
 		result.page = 1; // 避免網址列中沒有頁碼
 		result.domain = temp[temp.length - 2];
-		System.out.println(result.domain);
+		//System.out.println(result.domain);
 		String A = temp[temp.length - 1];
 		if (A.indexOf("forum.php?") < 0) {
 			temp=A.split("\\?");

@@ -53,9 +53,9 @@ public class OptionFrame extends JFrame {
 	private String tempoutputEncoding;
 
 	public OptionFrame(final Option option, final JTextArea resulTextArea) {
-		super("設置");
+		super("Setup");
 		setLayout(new FlowLayout());
-		novalPathButton = new JButton("小說存放目錄");
+		novalPathButton = new JButton("Text file output directory : ");
 		novelPathTextField = new JTextField(option.novelPath, 50);
 		novelPathPanel = new JPanel();
 		novalPathButton.addActionListener(new ActionListener() {
@@ -65,7 +65,7 @@ public class OptionFrame extends JFrame {
 				// TODO Auto-generated method stub
 				JFileChooser pathChooser = new JFileChooser();
 				pathChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-				pathChooser.setDialogTitle("選擇檔案存放路徑");
+				pathChooser.setDialogTitle("Select the path to save");
 				int result = pathChooser.showOpenDialog(OptionFrame.this);
 				if (result == JFileChooser.APPROVE_OPTION) {
 					String path = pathChooser.getSelectedFile()
@@ -79,7 +79,7 @@ public class OptionFrame extends JFrame {
 		add(novelPathPanel);
 		System.out.println(option.novelPath);
 
-		tempPathButton = new JButton("檔案暫存目錄");
+		tempPathButton = new JButton("Temp path : ");
 		tempPathTextField = new JTextField(option.tempPath, 50);
 		tempPathPanel = new JPanel();
 		tempPathButton.addActionListener(new ActionListener() {
@@ -89,7 +89,7 @@ public class OptionFrame extends JFrame {
 				// TODO Auto-generated method stub
 				JFileChooser pathChooser = new JFileChooser();
 				pathChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-				pathChooser.setDialogTitle("選擇檔案存放路徑");
+				pathChooser.setDialogTitle("Select the path to save");
 				int result = pathChooser.showOpenDialog(OptionFrame.this);
 				if (result == JFileChooser.APPROVE_OPTION) {
 					String path = pathChooser.getSelectedFile()
@@ -102,7 +102,7 @@ public class OptionFrame extends JFrame {
 		tempPathPanel.add(tempPathTextField);
 		add(tempPathPanel);
 
-		encodingLabel = new JLabel("自動轉碼選擇");
+		encodingLabel = new JLabel("Automatic translate encoding: ");
 /*		if (option.encoding) {
 			encodingTRadioButton = new JRadioButton("正體中文", true);
 			encodingSRadioButton = new JRadioButton("簡體中文", false);
@@ -111,8 +111,8 @@ public class OptionFrame extends JFrame {
 			encodingTRadioButton = new JRadioButton("正體中文", false);
 			encodingSRadioButton = new JRadioButton("簡體中文", true);
 		}*/
-		encodingTRadioButton = new JRadioButton("正體中文", option.encoding);
-		encodingSRadioButton = new JRadioButton("簡體中文", !option.encoding);
+		encodingTRadioButton = new JRadioButton("Traditional Chinese", option.encoding);
+		encodingSRadioButton = new JRadioButton("Simplified Chinese", !option.encoding);
 		tempEncoding=option.encoding;
 		encoding = new ButtonGroup();
 		encoding.add(encodingTRadioButton);
@@ -125,7 +125,7 @@ public class OptionFrame extends JFrame {
 		encodingSRadioButton.addItemListener(new RadioButtonHandler(false));
 		add(encodingPanel);
 		
-		outPutEncodeLabel = new JLabel("輸出編碼選擇");
+		outPutEncodeLabel = new JLabel("Select output encoding");
 		unicodeRadioButton = new JRadioButton("Unicode", option.outputEncode.equals("Unicode"));
 		utf_8RadioButton = new JRadioButton("UTF-8", !option.outputEncode.equals("Unicode"));
 		tempoutputEncoding=option.outputEncode;
@@ -140,7 +140,7 @@ public class OptionFrame extends JFrame {
 		utf_8RadioButton.addItemListener(new EnocdeButtonHandler(false));
 		add(outputEncodingPanel);
 		
-		threadNumberLabel =new JLabel("多執行序數目：");
+		threadNumberLabel =new JLabel("Thread number：");
 		threadNumberTextField  =new JTextField(String.valueOf(option.threadNumber), 5);
 		threadNuimberPanel =new JPanel();
 		threadNuimberPanel.add(threadNumberLabel);
@@ -148,13 +148,13 @@ public class OptionFrame extends JFrame {
 		add(threadNuimberPanel);
 		
 		if (option.replace) {
-			replaCheckBox = new JCheckBox("違禁語、拼音復原(最新功能)", true);
+			replaCheckBox = new JCheckBox("Slang recovery (new)", true);
 		} else {
-			replaCheckBox = new JCheckBox("違禁語、拼音復原(最新功能)", false);
+			replaCheckBox = new JCheckBox("Slang recovery (new)", false);
 		}
 
 		add(replaCheckBox);
-		setButton = new JButton("確定");
+		setButton = new JButton("OK");
 		setButton.addActionListener(new ActionListener() {
 
 			@Override

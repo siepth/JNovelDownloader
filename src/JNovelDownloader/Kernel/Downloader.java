@@ -1,7 +1,6 @@
 package JNovelDownloader.Kernel;
 
 import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,7 +8,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.util.List;
 import java.util.Map;
 
@@ -17,25 +15,27 @@ import javax.swing.JTextArea;
 
 import JNovelDownloader.Option.Option;
 
+
+
+
 public class Downloader {
 	private String[] urlStrings;
 	private int toPage;
 	private UrlData urlData;
 	private static String sessionId;
 	private JTextArea resultTextArea;
+	
 
 	public Downloader() {
-
 	}
 
-	public void setUP(int Page, String urlString,JTextArea resultTextArea) {
+	public void setUP(UrlData book,JTextArea resultTextArea) {
 		this.resultTextArea=resultTextArea;
-		resultTextArea.append("分析網址\r\n");
+		resultTextArea.append("Analyzing URL...\r\n");
 		resultTextArea.setCaretPosition(resultTextArea
 				.getText().length());
-		urlData = Analysis.analysisUrl(urlString);// 分析網址
-		this.toPage = Page;
-		
+		this.urlData = book;
+		this.toPage = book.page;
 	}
 
 	public UrlData getUrlData() {
@@ -43,31 +43,34 @@ public class Downloader {
 	}
 
 	public void generateUrlList() {
-		resultTextArea.append("產生下載清單...\r\n");
+		resultTextArea.append("Generate download list...total (" + toPage +") pages\r\n");
 		resultTextArea.setCaretPosition(resultTextArea
 				.getText().length());
 		// http://ck101.com/thread-1753100-55-1.html
-		urlStrings = new String[toPage - urlData.page + 1];
+		//urlStrings = new String[toPage - urlData.page + 1];
+		urlStrings = new String[toPage];
 		if (urlData.domain.indexOf("eyny") >= 0) {
 			//http://www02.eyny.com/archiver/?tid-8910527.html&mobile=yes
 			String temp = "http://" + urlData.domain
 					+ "/archiver/?tid-"
 					+ String.valueOf(urlData.Tid) + "&mobile=yes&page=";
 			int m = 0;
-			for (int n = urlData.page; n <= toPage; n++) {
+			//for (int n = urlData.page; n <= toPage; n++) {
+			for (int n = 1; n <= toPage; n++) {
 				urlStrings[m++] = temp + n;
 			}
 		} else {
 			String temp = "http://" + urlData.domain + "/thread-"
 					+ String.valueOf(urlData.Tid) + "-";
 			int m = 0;
-			for (int n = urlData.page; n <= toPage; n++) {
+			//for (int n = urlData.page; n <= toPage; n++) {
+			for (int n = 1; n <= toPage; n++) {
 				urlStrings[m++] = temp + n + "-1.html";
 			}
 		}
 	}
 
-	/***************** 以下function 是舊有的downloading ***************************/
+	/***************** 以下function 是 舊 有的downloading ***************************/
 	// public boolean downloadingOld(Option option, ReadHtml book,
 	// JTextArea resultTextArea) throws IOException {// 需要重點加速的地方
 	// if (urlData.wrongUrl) {
@@ -115,7 +118,7 @@ public class Downloader {
 	public boolean downloading(Option option, ReadHtml book,
 			JTextArea resultTextArea) throws IOException {// 需要重點加速的地方
 		if (urlData.wrongUrl) {
-			resultTextArea.append("網址有問題 無法分析\r\n");
+			resultTextArea.append("URL has problem, not able to analyze\r\n");
 			resultTextArea.setCaretPosition(resultTextArea
 					.getText().length());
 			return false;
@@ -126,7 +129,8 @@ public class Downloader {
 			generateUrlList();
 			// http://ck101.com/thread-1753100-55-1.html
 			int m = 0;
-			// int threadNumber = 4;
+			//threadnumber = option.threadNumber;
+			System.out.println("Thread: " + option.threadNumber + "; Total page: " + toPage + "/" + urlData.page);
 			int morethread = urlStrings.length % option.threadNumber; // 有多少執行續會多一個檔案
 			int tempNumber = urlStrings.length / option.threadNumber; // 每個執行續最少多少個檔案
 			DownloadThread[] downloadThread = new DownloadThread[option.threadNumber];
@@ -135,11 +139,14 @@ public class Downloader {
 			String[] totalTo = new String[urlStrings.length];
 			int number;
 			/*************** 建立存放清單 ******************************/
-			for (int n = urlData.page; n <= toPage; n++) {
+//			for (int n = urlData.page; n <= toPage; n++) {
+			for (int n = 1; n <= toPage; n++) {
 				// from[m]=urlStrings[m];
 				totalTo[m] = option.tempPath + "thread-" + urlData.Tid + "-"
 						+ n + "-1.html";
 				;
+				//System.out.println("totalTo:[" + totalTo[m] + "]");
+				
 				// book.addFileName(totalTo[m]);
 				m++;
 			}
@@ -156,9 +163,13 @@ public class Downloader {
 				to = new String[number];
 				for (int y = 0; y < number; y++) {
 					from[y] = urlStrings[m];
-					to[y] = totalTo[m++];
+					to[y] = totalTo[m];
+					System.out.println("from:" + from[y] + "; to: " + to[y]);
+					m++;
 				}
 				downloadThread[x] = new DownloadThread(from, to, x,resultTextArea);
+				//System.out.println("downloadthread:[" + m + "/" + number + "][" + x + "]");
+				
 				// 放入任務
 				// downloadThread[x] = new DownloadThread(from, to, x); // 放入任務
 				book.addFileName(to);//

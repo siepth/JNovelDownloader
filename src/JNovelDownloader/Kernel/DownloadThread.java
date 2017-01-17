@@ -99,9 +99,9 @@ public class DownloadThread extends Thread {
 			StringBuffer total = new StringBuffer();
 
 			try {
-				System.out.print("開始下載檔案: " + from[n]);
+				System.out.print("Thread [" + this.threatNember + "]("+ n + "/" + this.to.length + "): Start to download: " + from[n] + " to: " + to[n] + "...");
 				if (resultTextArea != null) {
-					resultTextArea.append("\r\n開始下載檔案: " + from[n]);
+					resultTextArea.append("Thread [" + this.threatNember + "]("+ n + "/" + this.to.length + "): Start to download: " + from[n] + "...\r\n");
 					resultTextArea.setCaretPosition(resultTextArea.getText()
 							.length());
 				}
@@ -157,33 +157,33 @@ public class DownloadThread extends Thread {
 				// System.out.println("檔案："+total);
 			} catch (Exception e) {
 				e.printStackTrace();
-				System.out.println("取得網頁html時發生錯誤....");
+				System.out.println("Error occured while getting html...." + e.getMessage());
 				if (resultTextArea != null) {
-					resultTextArea.append("\r\n取得網頁html時發生錯誤");
+					resultTextArea.append("\r\nError occured while getting html");
 					resultTextArea.setCaretPosition(resultTextArea.getText()
 							.length());
 				}
 				if(downloadmiss<20)
 				{
 					downloadmiss++;
-					System.out.println("等待一秒嘗試重新下載....");
+					System.out.println("Wait 1 second to retry....");
 					if (resultTextArea != null) {
-						resultTextArea.append("\r\n等待一秒嘗試重新下載....");
+						resultTextArea.append("\r\nWait 1 second to retry....");
 						resultTextArea.setCaretPosition(resultTextArea.getText()
 								.length());
 					}
 					n--;
 					try {
-						Thread.sleep(1000);
+						Thread.sleep(1000 + 100 * (20-downloadmiss));
 					} catch (InterruptedException e1) {
 					}
 					continue;
 				}
 				else
 				{
-					System.out.println("沒救了....");
+					System.out.println("Cannot recover....");
 					if (resultTextArea != null) {
-						resultTextArea.append("\r\n沒救了....");
+						resultTextArea.append("\r\nCannot recover....");
 						resultTextArea.setCaretPosition(resultTextArea.getText()
 								.length());
 					}
@@ -198,13 +198,15 @@ public class DownloadThread extends Thread {
 				writer.write(total.toString());
 				writer.flush();
 				writer.close();
-				System.out.println("下載完成");
+				System.out.println(" Done.");
 				if (resultTextArea != null) {
-					resultTextArea.setText(resultTextArea.getText().replaceAll(from[n]+"\r\n", from[n]+"下载完成\r\n"));
+					resultTextArea.setText(resultTextArea.getText().replaceAll(from[n]+"...\r\n", from[n]+"...Done.\r\n"));
 					resultTextArea.setCaretPosition(resultTextArea.getText()
 							.length());
 				}
 			} catch (Exception e) {
+				System.out.println("downloadstate = false....");
+
 				// TODO: handle exception
 				downloadstate = false;
 				return;

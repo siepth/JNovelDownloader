@@ -19,6 +19,8 @@ public class MakeBookThread extends Thread {
 	private boolean replace;
 	private String result;
 	private int type;
+	private int inputsize;
+	private int outputsize;
 	private JTextArea resultTextArea;
 	private String lineSeparator;
 
@@ -29,12 +31,13 @@ public class MakeBookThread extends Thread {
 		this.encoding = encoding;
 		this.replace = replace;
 		this.type = type;
+		this.inputsize = this.outputsize = 0;
 		this.resultTextArea = resultTextArea;
 		this.lineSeparator=System.getProperty("line.separator");
 	}
 
 	public void run() {
-		System.out.println(type);
+		System.out.println("html type:" + type);
 		if (type == 1) {
 			this.runType1();
 		} else {
@@ -56,6 +59,7 @@ public class MakeBookThread extends Thread {
 		 * 處理標題 3: in article section 處理內文
 		 */
 		int end;
+		int size = 0;
 		String temp;
 		// int otherTable = 0;
 		/* 用於正規表示式的過濾，比replace all 快速準確 */
@@ -77,9 +81,11 @@ public class MakeBookThread extends Thread {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			} // 開啟檔案
-			System.out.println(html[n] + "處理中");
+			//inputsize += html[n].length();
 			try {
 				while ((temp = reader.readLine()) != null) { // 一次讀取一行
+					size += temp.length();
+					
 					switch (stage) {
 					case 0:
 						if (temp.indexOf("<p class=\"author\">") >= 0) {
@@ -143,6 +149,9 @@ public class MakeBookThread extends Thread {
 						break;
 					}
 				}
+				inputsize += size;
+				System.out.println(html[n] + " processing (" + size + ") words...");
+
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -178,6 +187,7 @@ public class MakeBookThread extends Thread {
 		int stage = 0; // 0=不再內文中 ,1=在<div class="pbody"> 中,
 						// 2=在<div class="mes">中 ,
 						// 3=<div id="postmessage_~~~~" class="mes">中 ,
+		int size = 0;
 		String temp;
 		boolean flag = false;
 		int otherTable = 0;
@@ -198,11 +208,10 @@ public class MakeBookThread extends Thread {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			} // 開啟檔案
-			System.out.println(html[n] + "處理中");
-			resultTextArea.append(html[n] + "處理中"+lineSeparator);
-			resultTextArea.setCaretPosition(resultTextArea.getText().length());
+			
 			try {
 				while ((temp = reader.readLine()) != null) { // 一次讀取一行
+					size += temp.length();
 					switch (stage) {
 					case 0:
 						if (temp.indexOf("class=\"pbody") >= 0) {
@@ -327,6 +336,11 @@ public class MakeBookThread extends Thread {
 						break;
 					}
 				}
+				inputsize += size;
+				System.out.println(html[n] + " processing (" + size + ") words...");
+				resultTextArea.append(html[n] + " processing (" + size + ") words...\r\n");
+				resultTextArea.setCaretPosition(resultTextArea.getText().length());
+
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -355,10 +369,18 @@ public class MakeBookThread extends Thread {
 		//	result = encoding.TtoS(bookData.toString());
 			result = encoding.TtoS(tempData);
 		}
+		outputsize = result.length();
 	}
 
 	public String getResult() {
 		return result;
 	}
-
+	
+	public int getInputSize() {
+		return inputsize;
+	}
+	public int getOutputSize() {
+		return outputsize;
+	}
+	
 }
